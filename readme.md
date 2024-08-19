@@ -5,7 +5,7 @@ Windows 11 & Python 3.11.0
 ## Usage
 0. Clone the repository to your local machine.
 
-1. Get the your Gemini and pinecone database api-key. Creating .env file with content : 
+1. Obtain your Gemini and Pinecone API keys. Create a .env file with the following content: 
 
 ```
 GOOGLE_API_KEY =  your_api
