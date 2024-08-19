@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chat with Resource Collection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>Chat Interface</h1>
+            </div>
+
+            <div id="chatbox" class="chatbox">
+                <!-- Messages will appear here -->
+            </div>
+
+            <div class="chat-input-container">
+                <input id="query" type="text" placeholder="Type your query..." onkeypress="handleKeyPress(event)">
+                <button onclick="performAction()">Send</button>
+            </div>
+        </div>
+
+        <div class="resource-collection">
+            <h2>Resource Collection</h2>
+            <div id="resources">
+                <!-- Resources will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function performAction() {
+            const query = document.getElementById('query').value;
+            if (query.trim() === "") return;
+
+            try {
+                // Call the API and get the data
+                const response = await fetch(`http://127.0.0.1:8000/search/qa/${query}`);
+                const data = await response.json();
+
+                // Display the text message in the chatbox
+                addMessage(data.text, 'bot');
+
+                // Display the resources in the ResourceCollection
+                displayResources(data.ResourceCollection);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+
+            // Clear the input field
+            document.getElementById('query').value = '';
+        }
+
+        function addMessage(text, sender) {
+            const chatbox = document.getElementById('chatbox');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            messageElement.innerText = text;
+            chatbox.appendChild(messageElement);
+
+            // Auto-scroll to the bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function displayResources(resources) {
+            const resourcesDiv = document.getElementById('resources');
+            resourcesDiv.innerHTML = ''; // Clear previous resources
+
+            if (!Array.isArray(resources)) {
+                console.error('Expected an array for resources, got:', resources);
+                return;
+            }
+
+            resources.forEach(resource => {
+                const resourceElement = document.createElement('div');
+                resourceElement.classList.add('resource-item');
+                resourceElement.innerHTML = `<strong>${resource.topic}</strong><br><em>${resource.title}</em><br>${resource.principle}`;
+                resourcesDiv.appendChild(resourceElement);
+            });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                performAction();
+            }
+        }
+    </script>
+</body>
+
+</html>
