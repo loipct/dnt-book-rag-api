@@ -1,9 +1,16 @@
 # Python FastAPI Project with LangChain for RAG
 
+Windows 11 & Python 3.11.0  
+
 ## Usage
 0. Clone the repository to your local machine.
 
-1. Get the your Gemini api-key at [https://ai.google.dev/gemini-api/docs/api-key](https://ai.google.dev/gemini-api/docs/api-key) and pass it into config/cfg.yaml ("api_key": "...").
+1. Get the your Gemini and pinecone database api-key. Creating .env file with content : 
+
+```
+GOOGLE_API_KEY =  your_api
+PINECONE_API_KEY = your_api
+```
 
 2. Create pythonn env: 
 ```
