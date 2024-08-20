@@ -2,12 +2,14 @@ import os
 from data.pinecone import search as search
 from model.airesults import AIResults
 from model.resource import Resource
+from .multiQuery import *
 
 from langchain.docstore.document import Document
 from langchain_core.runnables import  RunnablePassthrough
 from langchain.prompts import ChatPromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
+
 from config import config as config
 
 llm_model_name = config.get_llm_model_config()['model_name']
@@ -33,10 +35,14 @@ def get_query_summary(query:str) -> str:
 
     return AIResults(text =  stuff_chain.invoke({'text' : docs}), ResourceCollection=resources) 
 
-
-def get_qa_from_query(query:str) -> str:
-   
-    resources, docs = search.similarity_search(query)
+def get_qa_from_query(query:str, multiple_queries = True) -> str:
+    if multiple_queries:
+        queries = get_generated_queries(query)
+        print("queries : ", queries)
+        resources, docs = search.similarity_search(queries)
+        print(len(docs))
+    else :
+        resources, docs = search.similarity_search([query])
 
     if len(resources) == 0 :return AIResults(text="No Documents Found",ResourceCollection=resources)
 
@@ -56,7 +62,7 @@ def get_qa_from_query(query:str) -> str:
         return "\n\n".join(doc.page_content for doc in docs)
 
     content = format_docs(docs)
-
+    # print("content : ", content)
     rag_chain = (
     {"context": lambda x: content , "question": RunnablePassthrough()}
     | prompt
@@ -66,9 +72,13 @@ def get_qa_from_query(query:str) -> str:
 
     return AIResults(text=rag_chain.invoke(query),ResourceCollection=resources)
 
-def get_qa_from_query_w_rerank(query:str) -> str:
-       
-    resources, docs = search.similarity_search_rerank(query)
+def get_qa_from_query_w_rerank(query:str, multiple_queries = False) -> str:
+    if multiple_queries:
+        queries = get_generated_queries(query)
+        resources, docs = search.similarity_search_rerank(queries)
+    else :
+        resources, docs = search.similarity_search_rerank([query])  
+    
 
     if len(resources) == 0 :return AIResults(text="No Documents Found",ResourceCollection=resources)
 

@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Chat with Resource Collection</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Thêm các kiểu để phần Resource Collection có thể cuộn */
+        .resource-collection {
+            max-height: 400px; /* Bạn có thể điều chỉnh chiều cao tối đa này */
+            overflow-y: auto;  /* Cho phép cuộn theo chiều dọc */
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Cấu hình các phần khác nếu cần */
+        .chatbox {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -49,20 +72,15 @@
             if (query.trim() === "") return;
 
             try {
-                // Call the API based on the selected mode
                 const response = await fetch(`http://127.0.0.1:8000/search/${mode}/${query}`);
                 const data = await response.json();
 
-                // Display the text message in the chatbox
                 addMessage(data.text, 'bot');
-
-                // Display the resources in the ResourceCollection
                 displayResources(data.ResourceCollection);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
 
-            // Clear the input field
             document.getElementById('query').value = '';
         }
 
@@ -73,27 +91,24 @@
             messageElement.innerText = text;
             chatbox.appendChild(messageElement);
 
-            // Auto-scroll to the bottom
             chatbox.scrollTop = chatbox.scrollHeight;
         }
 
         function displayResources(resources) {
             const resourcesDiv = document.getElementById('resources');
-            resourcesDiv.innerHTML = ''; // Clear previous resources
+            resourcesDiv.innerHTML = '';
 
             if (!Array.isArray(resources)) {
                 console.error('Expected an array for resources, got:', resources);
                 return;
             }
 
-            // Display the number of resources
             const resourceCount = resources.length;
             const countElement = document.createElement('div');
             countElement.classList.add('resource-count');
             countElement.innerText = `Number of resources: ${resourceCount}`;
             resourcesDiv.appendChild(countElement);
 
-            // Display each resource
             resources.forEach(resource => {
                 const resourceElement = document.createElement('div');
                 resourceElement.classList.add('resource-item');
