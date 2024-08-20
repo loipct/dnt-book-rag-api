@@ -1,7 +1,13 @@
 # Python FastAPI Project with LangChain for RAG
 
 Windows 11 & Python 3.11.0  
+## Key Features
 
+- Implemented routing
+- Implemented multi queries
+- Implemented reranking
+- Trying to make raptor ..
+  
 ## Usage
 0. Clone the repository to your local machine.
 
