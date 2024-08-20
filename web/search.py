@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from service import search as search 
+from service import routing as routing 
 from model.resource import Resource
 from model.airesults import AIResults
 
@@ -18,8 +19,14 @@ def get_query_summary(query) -> AIResults:
 
 @router.get("/qa/{query}")
 def get_query_qa(query) -> AIResults:
-    return search.get_qa_from_query(query)
+    if routing.routing_query(query):
+        print("This question is not related to the book !!")
+        return search.get_qa_from_query(query)
+    return search.get_llm_response(query)
 
 @router.get("/qa_w_rerank/{query}")
 def get_query_qa_w_rerank(query) -> AIResults:
-    return search.get_qa_from_query_w_rerank(query)
+    if routing.routing_query(query):
+        print("This question is not related to the book !!")
+        return search.get_qa_from_query_w_rerank(query)
+    return search.get_llm_response(query)

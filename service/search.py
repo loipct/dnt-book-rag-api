@@ -110,3 +110,22 @@ def get_qa_from_query_w_rerank(query:str, multiple_queries = True) -> str:
     )
 
     return AIResults(text=rag_chain.invoke(query),ResourceCollection=resources)
+
+def get_llm_response(query:str) -> str:
+    template = """
+    Answer the question. If you can't 
+    answer the question, reply "I don't know".
+    Question: {question}
+    """
+
+    prompt = ChatPromptTemplate.from_template(template)
+    llm_model = GoogleGenerativeAI(model=llm_model_name)
+
+    rag_chain = (
+    {"question": RunnablePassthrough()}
+    | prompt
+    | llm_model
+    | StrOutputParser()
+    )
+    default_text = "This question is not related to the book !! This is the answer based on my knowledge :\n\n"
+    return AIResults(text=default_text + rag_chain.invoke(query),ResourceCollection=[])

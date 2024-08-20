@@ -18,7 +18,4 @@ def get_config():
     database_config = config[0]
     llm_model_config = config[1]
     
-    # os.environ["GOOGLE_API_KEY"] =   llm_model_config['api_key']
-    # os.environ['PINECONE_API_KEY'] = database_config['environment']['api_key']
-    
 get_config()
