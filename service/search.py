@@ -40,9 +40,10 @@ def get_qa_from_query(query:str, multiple_queries = True) -> str:
         queries = get_generated_queries(query)
         print("queries : ", queries)
         resources, docs = search.similarity_search(queries)
-        print(len(docs))
     else :
         resources, docs = search.similarity_search([query])
+        
+    print("docs : ", len(docs))
 
     if len(resources) == 0 :return AIResults(text="No Documents Found",ResourceCollection=resources)
 
@@ -72,14 +73,16 @@ def get_qa_from_query(query:str, multiple_queries = True) -> str:
 
     return AIResults(text=rag_chain.invoke(query),ResourceCollection=resources)
 
-def get_qa_from_query_w_rerank(query:str, multiple_queries = False) -> str:
+def get_qa_from_query_w_rerank(query:str, multiple_queries = True) -> str:
     if multiple_queries:
         queries = get_generated_queries(query)
+        print("queries : ", queries)
         resources, docs = search.similarity_search_rerank(queries)
     else :
         resources, docs = search.similarity_search_rerank([query])  
     
-
+    print("docs : ", len(docs))
+    
     if len(resources) == 0 :return AIResults(text="No Documents Found",ResourceCollection=resources)
 
     template = """
