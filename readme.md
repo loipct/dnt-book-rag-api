@@ -32,5 +32,5 @@ python -m pip install -r requirements.txt
 ```
 python main.py
 ```
-5. View the Swagger Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) or [http://127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
+5. View the Swagger Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) or trying chat: [http://127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
 
