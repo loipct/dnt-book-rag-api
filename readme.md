@@ -1,6 +1,7 @@
-# Python FastAPI Project with LangChain for RAG
+# Python FastAPI Project with LangChain & Google ‎Gemini AI for RAG
 
 Windows 11 & Python 3.11.0  
+
 ## Key Features
 
 - Implemented routing
