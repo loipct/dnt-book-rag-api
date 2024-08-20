@@ -23,6 +23,14 @@
                 <input id="query" type="text" placeholder="Type your query..." onkeypress="handleKeyPress(event)">
                 <button onclick="performAction()">Send</button>
             </div>
+
+            <div class="mode-selector">
+                <label for="mode">Select Mode:</label>
+                <select id="mode">
+                    <option value="qa_w_rerank">QA with Re-Rank</option>
+                    <option value="qa">QA without Re-Rank</option>
+                </select>
+            </div>
         </div>
 
         <div class="resource-collection">
@@ -36,11 +44,13 @@
     <script>
         async function performAction() {
             const query = document.getElementById('query').value;
+            const mode = document.getElementById('mode').value;
+
             if (query.trim() === "") return;
 
             try {
-                // Call the API and get the data
-                const response = await fetch(`http://127.0.0.1:8000/search/qa/${query}`);
+                // Call the API based on the selected mode
+                const response = await fetch(`http://127.0.0.1:8000/search/${mode}/${query}`);
                 const data = await response.json();
 
                 // Display the text message in the chatbox
@@ -76,6 +86,14 @@
                 return;
             }
 
+            // Display the number of resources
+            const resourceCount = resources.length;
+            const countElement = document.createElement('div');
+            countElement.classList.add('resource-count');
+            countElement.innerText = `Number of resources: ${resourceCount}`;
+            resourcesDiv.appendChild(countElement);
+
+            // Display each resource
             resources.forEach(resource => {
                 const resourceElement = document.createElement('div');
                 resourceElement.classList.add('resource-item');

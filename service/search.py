@@ -65,3 +65,35 @@ def get_qa_from_query(query:str) -> str:
     )
 
     return AIResults(text=rag_chain.invoke(query),ResourceCollection=resources)
+
+def get_qa_from_query_w_rerank(query:str) -> str:
+       
+    resources, docs = search.similarity_search_rerank(query)
+
+    if len(resources) == 0 :return AIResults(text="No Documents Found",ResourceCollection=resources)
+
+    template = """
+    Answer the question based on the context below. If you can't 
+    answer the question, reply "I don't know".
+
+    Context: {context}
+
+    Question: {question}
+    """
+
+    prompt = ChatPromptTemplate.from_template(template)
+    llm_model = GoogleGenerativeAI(model=llm_model_name)
+
+    def format_docs(docs):
+        return "\n\n".join(doc.page_content for doc in docs)
+
+    content = format_docs(docs)
+
+    rag_chain = (
+    {"context": lambda x: content , "question": RunnablePassthrough()}
+    | prompt
+    | llm_model
+    | StrOutputParser()
+    )
+
+    return AIResults(text=rag_chain.invoke(query),ResourceCollection=resources)

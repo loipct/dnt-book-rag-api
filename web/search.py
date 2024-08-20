@@ -19,3 +19,7 @@ def get_query_summary(query) -> AIResults:
 @router.get("/qa/{query}")
 def get_query_qa(query) -> AIResults:
     return search.get_qa_from_query(query)
+
+@router.get("/qa_w_rerank/{query}")
+def get_query_qa_w_rerank(query) -> AIResults:
+    return search.get_qa_from_query_w_rerank(query)
