@@ -3,8 +3,6 @@ from data.pinecone import search as search
 from model.airesults import AIResults
 from model.resource import Resource
 from .multiQuery import *
-
-from langchain.docstore.document import Document
 from langchain_core.runnables import  RunnablePassthrough
 from langchain.prompts import ChatPromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
