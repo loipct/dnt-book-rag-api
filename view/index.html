@@ -48,10 +48,19 @@
             </div>
 
             <div class="mode-selector">
-                <label for="mode">Select Mode:</label>
-                <select id="mode">
-                    <option value="qa_w_rerank">QA with Re-Rank</option>
-                    <option value="qa">QA without Re-Rank</option>
+                <label for="Querymode">Select QueryMode:</label>
+                <select id="queryMode">
+                    <option value="Auto">QA Auto</option>
+                    <option value="Factual">QA Factual</option>
+                    <option value="Analytical">QA Analytical</option>
+                </select>
+            </div>
+
+            <div class="mode-selector">
+                <label for="RerankMode">Select RerankMode:</label>
+                <select id="rerankMode">
+                    <option value="true">w rerank</option>
+                    <option value="false">wt rerank</option>
                 </select>
             </div>
         </div>
@@ -67,16 +76,17 @@
     <script>
         async function performAction() {
             const query = document.getElementById('query').value;
-            const mode = document.getElementById('mode').value;
+            const queryMode = document.getElementById('queryMode').value;
+            const rerankMode = document.getElementById('rerankMode').value === 'true';
 
             if (query.trim() === "") return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/search/${mode}/${query}`);
+                const response = await fetch(`http://127.0.0.1:8000/search/adaptive_query/${query}?rerank_mode=${rerankMode}&query_category=${queryMode}`);
                 const data = await response.json();
 
-                addMessage(data.text, 'bot');
-                displayResources(data.ResourceCollection);
+                addMessage(data.text || "No response text available", 'bot');
+                displayResources(data.ResourceCollection || []);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
