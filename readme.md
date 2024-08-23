@@ -6,7 +6,7 @@ Windows 11 & Python 3.11.0
 
 - Implemented routing
 - Implemented multi queries
-- Implemented adaptive_retrieval
+- Implemented adaptive retrieval
 - Implemented reranking
 - Trying to make raptor ..
   
