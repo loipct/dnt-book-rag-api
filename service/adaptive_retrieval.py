@@ -37,7 +37,7 @@ Define BaseRetrievalStrategy
 class BaseRetrievalStrategy:
     def __init__(self):
         self.search_engine = search
-        self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", temperature=0.8, top_p=0.5)
+        self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest", temperature=0.8, top_p=0.5)
 
 
     def retrieve(self, query, k=4):
@@ -57,7 +57,7 @@ class FactualRetrievalStrategy(BaseRetrievalStrategy):
         print(f'enhande query: {enhanced_query}')
 
         # Retrieve documents using the enhanced query
-        docs = self.search_engine.similarity_search([enhanced_query])
+        docs = self.search_engine.similarity_search([enhanced_query], k=k)
         return [doc for doc in docs]
 
 
@@ -90,7 +90,7 @@ class AnalyticalRetrievalStrategy(BaseRetrievalStrategy):
     def retrieve(self, query, k=4):
         queries = get_generated_queries(query)
         print("Generated_queries : ", queries)
-        docs = self.search_engine.similarity_search(queries)
+        docs = self.search_engine.similarity_search(queries, k=k)
         return docs
     
 
@@ -110,22 +110,22 @@ class AdaptiveRetriever:
             # "Contextual": ContextualRetrievalStrategy(texts)
         }
 
-    def get_relevant_documents(self, query: str, mode: str = "Auto") -> List[Document]:
+    def get_relevant_documents(self, query: str, k:int = 3, mode: str = "Auto") -> List[Document]:
         if mode == "Auto" or mode not in ['Factual', 'Analytical', 'Auto']:
             category = self.classifier.classify(query)
         else:
             category = mode
         print("Using : ", category)
         strategy = self.strategies[category]
-        return strategy.retrieve(query)
+        return strategy.retrieve(query, k)
     
 # Define aditional retriever that inherits from langchain BaseRetriever
 class PydanticAdaptiveRetriever():
     def __init__(self, adaptive_retriever):
         self.adaptive_retriever: AdaptiveRetriever = adaptive_retriever
 
-    def get_relevant_documents(self, query: str, mode: str = "Auto") -> List[Document]:
-        return self.adaptive_retriever.get_relevant_documents(query, mode)
+    def get_relevant_documents(self, query: str, k:int = 3, mode: str = "Auto") -> List[Document]:
+        return self.adaptive_retriever.get_relevant_documents(query, k, mode)
 
     async def aget_relevant_documents(self, query: str) -> List[Document]:
         return self.get_relevant_documents(query)
@@ -144,7 +144,7 @@ class AdaptiveRAG:
     def __init__(self):
         adaptive_retriever = AdaptiveRetriever()
         self.retriever = PydanticAdaptiveRetriever(adaptive_retriever=adaptive_retriever)
-        self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", temperature=0.8, top_p=0.5)
+        self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest", temperature=0.8, top_p=0.5)
         
         # Create a custom prompt
         prompt_template = """Use the following pieces of context to answer the question at the end. 
@@ -159,8 +159,8 @@ class AdaptiveRAG:
         # Create the LLM chain
         self.llm_chain = prompt | self.llm | StrOutputParser()
         
-    def answer(self, query: str, rerank_mode : bool = True, query_category: str = "Auto") -> str:
-        docs = self.retriever.get_relevant_documents(query, query_category)
+    def answer(self, query: str, k:int = 3, rerank_mode : bool = True, query_category: str = "Auto") -> str:
+        docs = self.retriever.get_relevant_documents(query, k, query_category)
         print("Num docs : ", len(docs))
         if rerank_mode:
             docs = rerank.reranking_relevant_documents(query, docs)

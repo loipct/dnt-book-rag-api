@@ -15,7 +15,7 @@ def routing_query(query : str) -> bool:
     The question: {question} \n
     Output : True or False"""
     prompt= ChatPromptTemplate.from_template(template)
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", temperature=0.8, top_p=0.5)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest", temperature=0.8, top_p=0.5)
     structured_llm = llm.with_structured_output(relation_check)
     checking_chain = (
         prompt 

@@ -4,4 +4,4 @@
     index_name : "dnt-book"
   
 - name : llm_model
-  model_name : "gemini-1.5-pro-latest"
+  model_name : "gemini-1.0-pro-latest"

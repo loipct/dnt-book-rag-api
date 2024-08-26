@@ -7,13 +7,11 @@ from config import config as config
 
 load_dotenv()
 
-collection = None
-retriever = None
+vectorstore = None
 embeddings = None
-cross_encoder_retriever  = None
 
 def pineconedb_init():
-    global collection, retriever, embeddings
+    global  vectorstore, embeddings
     
     #embeddings
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -29,6 +27,5 @@ def pineconedb_init():
     #DB
     index_name = config.get_database_config()['environment']['index_name'] #"ai-doc"
     vectorstore = PineconeVectorStore(embedding = embeddings, index_name = index_name)
-    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"k": 5, "score_threshold": 0.5})
 
 pineconedb_init()

@@ -44,6 +44,7 @@
 
             <div class="chat-input-container">
                 <input id="query" type="text" placeholder="Type your query..." onkeypress="handleKeyPress(event)">
+                <input id="top_k" type="number" placeholder="Enter a number..." onkeypress="handleKeyPress(event)">
                 <button onclick="performAction()">Send</button>
             </div>
 
@@ -76,13 +77,14 @@
     <script>
         async function performAction() {
             const query = document.getElementById('query').value;
+            const k = parseInt(document.getElementById('top_k').value);
             const queryMode = document.getElementById('queryMode').value;
             const rerankMode = document.getElementById('rerankMode').value === 'true';
 
             if (query.trim() === "") return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/search/adaptive_query/${query}?rerank_mode=${rerankMode}&query_category=${queryMode}`);
+                const response = await fetch(`http://127.0.0.1:8000/search/adaptive_query/${query}?k=${k}&rerank_mode=${rerankMode}&query_category=${queryMode}`);
                 const data = await response.json();
 
                 addMessage(data.text || "No response text available", 'bot');
